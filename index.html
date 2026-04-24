@@ -2216,7 +2216,7 @@ input, textarea { outline: none; }
 
         <div id="leafletMap"></div>
 
-        <div class="sheet expanded" id="sheet">
+        <div class="sheet mid" id="sheet">
           <div class="sheet-handle-area" id="sheetHandle">
             <div class="sheet-handle"></div>
             <div class="sheet-hint"><span class="arrow">↑</span> Drag to open list</div>
@@ -3370,10 +3370,13 @@ function initMap() {
   if (!mapEl) return;
 
   leafletMap = L.map(mapEl, {
-    center: [39.5, -96],      // center of USA
+    center: [39.5, -92],       // slightly east — pins cluster heavier on east coast
     zoom: 4,
     zoomControl: false,        // we use our own floating buttons
-    attributionControl: true
+    attributionControl: true,
+    // Restrict to USA bounds so you can't pan into the void
+    maxBounds: [[15, -145], [55, -55]],
+    maxBoundsViscosity: 1
   });
 
   tileLayer = L.tileLayer(currentTileUrl(), {
