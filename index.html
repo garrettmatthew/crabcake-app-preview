@@ -779,13 +779,27 @@ input, textarea { outline: none; }
 .cta-stack {
   display: flex;
   flex-direction: column;
-  gap: 8px;
-  margin-bottom: 18px;
+  gap: 10px;
+  margin-bottom: 20px;
 }
 .cta-stack .btn {
-  height: 48px;
-  border-radius: 14px;
-  font-size: 14.5px;
+  height: 58px;
+  border-radius: 999px;
+  font-size: 16px;
+  font-weight: 800;
+  letter-spacing: -.01em;
+  gap: 8px;
+}
+.cta-stack .btn svg { width: 18px; height: 18px; }
+.cta-stack .btn.gold {
+  box-shadow: 0 4px 14px -4px rgba(228,178,72,.5);
+}
+.cta-stack .btn.primary {
+  box-shadow: 0 4px 14px -4px rgba(232,61,53,.45);
+}
+.cta-stack .btn:active {
+  transform: scale(.98);
+  box-shadow: 0 2px 8px -2px rgba(0,0,0,.2);
 }
 .sd-hero {
   height: 240px;
