@@ -8,6 +8,9 @@
 <meta name="apple-mobile-web-app-title" content="Crabcake">
 <meta name="theme-color" content="#f6f2ea">
 <title>Crabcake — by the Baltimore Boys</title>
+<!-- iOS / Android home-screen icons (SVG data-URI favicon) -->
+<link rel="icon" type="image/svg+xml" href='data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32"><rect width="32" height="32" rx="8" fill="%23e83d35"/><g fill="%23ffffff"><ellipse cx="16" cy="18" rx="7" ry="5.5"/><circle cx="13" cy="11" r="1.8"/><circle cx="19" cy="11" r="1.8"/><rect x="12.3" y="12.5" width="1.4" height="2.5" rx=".5"/><rect x="18.3" y="12.5" width="1.4" height="2.5" rx=".5"/><path d="M 2 16 Q 2 14 4 14 Q 7 14 9 16 L 9 17 L 6 17 Z"/><path d="M 2 20 Q 2 22 4 22 Q 7 22 9 20 L 9 19 L 6 19 Z"/><path d="M 30 16 Q 30 14 28 14 Q 25 14 23 16 L 23 17 L 26 17 Z"/><path d="M 30 20 Q 30 22 28 22 Q 25 22 23 20 L 23 19 L 26 19 Z"/></g><g stroke="white" stroke-width="2" stroke-linecap="round" fill="none"><path d="M 10 22 L 8 26"/><path d="M 13 23 L 12 27"/><path d="M 19 23 L 20 27"/><path d="M 22 22 L 24 26"/></g></svg>'>
+<link rel="apple-touch-icon" href='data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32"><rect width="32" height="32" fill="%23e83d35"/><g fill="%23ffffff"><ellipse cx="16" cy="18" rx="7" ry="5.5"/><circle cx="13" cy="11" r="1.8"/><circle cx="19" cy="11" r="1.8"/><rect x="12.3" y="12.5" width="1.4" height="2.5" rx=".5"/><rect x="18.3" y="12.5" width="1.4" height="2.5" rx=".5"/><path d="M 2 16 Q 2 14 4 14 Q 7 14 9 16 L 9 17 L 6 17 Z"/><path d="M 2 20 Q 2 22 4 22 Q 7 22 9 20 L 9 19 L 6 19 Z"/><path d="M 30 16 Q 30 14 28 14 Q 25 14 23 16 L 23 17 L 26 17 Z"/><path d="M 30 20 Q 30 22 28 22 Q 25 22 23 20 L 23 19 L 26 19 Z"/></g><g stroke="white" stroke-width="2" stroke-linecap="round" fill="none"><path d="M 10 22 L 8 26"/><path d="M 13 23 L 12 27"/><path d="M 19 23 L 20 27"/><path d="M 22 22 L 24 26"/></g></svg>'>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400..800&family=Manrope:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
@@ -166,10 +169,9 @@ input, textarea { outline: none; }
     background: var(--crab);
     border-radius: 10px;
     display: flex; align-items: center; justify-content: center;
-    font-size: 22px;
-    line-height: 1;
-    font-family: "Apple Color Emoji", "Segoe UI Emoji", "Noto Color Emoji", sans-serif;
+    color: #fff;
   }
+  .desktop-info .logo-mark svg { width: 24px; height: 24px; }
   .desktop-info h1 {
     font-family: 'Bricolage Grotesque', sans-serif;
     font-weight: 800;
@@ -336,11 +338,9 @@ input, textarea { outline: none; }
   border-radius: 10px;
   display: flex; align-items: center; justify-content: center;
   flex-shrink: 0;
-  font-size: 22px;
-  line-height: 1;
-  /* Render emoji crisp */
-  font-family: "Apple Color Emoji", "Segoe UI Emoji", "Noto Color Emoji", sans-serif;
+  color: #fff;
 }
+.home-logo svg { width: 26px; height: 26px; }
 
 .home-search {
   flex: 1;
@@ -1528,6 +1528,552 @@ input, textarea { outline: none; }
 
 .shell.modal-active .tabs { transform: translateY(100%); }
 
+/* ================================================================
+   POLISH: fade edges on chip row
+   ================================================================ */
+
+.chips {
+  mask-image: linear-gradient(90deg, transparent 0, #000 20px, #000 calc(100% - 20px), transparent 100%);
+  -webkit-mask-image: linear-gradient(90deg, transparent 0, #000 20px, #000 calc(100% - 20px), transparent 100%);
+}
+
+/* ================================================================
+   BOTTOM SHEET: drag-up hint
+   ================================================================ */
+
+.sheet-hint {
+  position: absolute;
+  top: 28px;
+  left: 50%;
+  transform: translateX(-50%);
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 9.5px;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+  font-weight: 600;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity .3s;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  white-space: nowrap;
+}
+.sheet:not(.expanded):not(.mid) .sheet-hint { opacity: 1; }
+.sheet-hint .arrow {
+  display: inline-block;
+  animation: arrowPulse 1.5s ease-in-out infinite;
+}
+@keyframes arrowPulse {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-3px); }
+}
+
+/* ================================================================
+   TOAST
+   ================================================================ */
+
+.toast {
+  position: absolute;
+  top: 90px;
+  left: 50%;
+  transform: translateX(-50%) translateY(-80px);
+  background: var(--ink);
+  color: var(--bg);
+  padding: 10px 16px;
+  border-radius: 999px;
+  font-size: 13px;
+  font-weight: 600;
+  box-shadow: 0 8px 24px rgba(0,0,0,.25);
+  z-index: 9999;
+  opacity: 0;
+  pointer-events: none;
+  transition: transform .3s var(--ease), opacity .3s;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  max-width: 90%;
+  white-space: nowrap;
+}
+.toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+.toast svg { width: 14px; height: 14px; color: var(--gold); }
+
+/* ================================================================
+   POST-RATING SUCCESS MODAL
+   ================================================================ */
+
+.success-overlay {
+  position: absolute;
+  inset: 0;
+  background: var(--crab);
+  color: #fff;
+  z-index: 100;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity .35s var(--ease);
+  padding: 40px;
+  text-align: center;
+}
+.success-overlay.show { opacity: 1; pointer-events: auto; }
+.success-crab {
+  font-size: 96px;
+  line-height: 1;
+  margin-bottom: 20px;
+  animation: successBounce .6s var(--ease);
+  font-family: "Apple Color Emoji", "Segoe UI Emoji", "Noto Color Emoji", sans-serif;
+}
+.success-overlay.show .success-crab { animation: successBounce .6s var(--ease) both, floatY 3s ease-in-out .6s infinite; }
+@keyframes successBounce {
+  0% { transform: scale(0) rotate(-30deg); opacity: 0; }
+  60% { transform: scale(1.2) rotate(10deg); opacity: 1; }
+  100% { transform: scale(1) rotate(0); opacity: 1; }
+}
+@keyframes floatY {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-8px); }
+}
+.success-title {
+  font-family: 'Bricolage Grotesque', sans-serif;
+  font-weight: 800;
+  font-size: 34px;
+  letter-spacing: -.03em;
+  line-height: 1;
+  margin-bottom: 10px;
+}
+.success-sub {
+  font-family: 'Manrope', sans-serif;
+  font-size: 15px;
+  opacity: .9;
+  max-width: 280px;
+  line-height: 1.4;
+}
+.success-score {
+  margin-top: 24px;
+  font-family: 'Bricolage Grotesque', sans-serif;
+  font-weight: 800;
+  font-size: 18px;
+  background: rgba(255,255,255,.18);
+  padding: 10px 20px;
+  border-radius: 999px;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  backdrop-filter: blur(10px);
+  border: 1.5px solid rgba(255,255,255,.3);
+}
+.success-score b { font-size: 26px; letter-spacing: -.04em; }
+
+/* ================================================================
+   EMPTY STATE
+   ================================================================ */
+
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 60px 24px;
+  text-align: center;
+  min-height: 380px;
+}
+.empty-illustration {
+  width: 120px;
+  height: 120px;
+  border-radius: 50%;
+  background: var(--bg-2);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 22px;
+  position: relative;
+}
+.empty-illustration::before, .empty-illustration::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  border: 1.5px dashed var(--border-2);
+  opacity: .5;
+  animation: pulseScale 3s ease-out infinite;
+}
+.empty-illustration::after { animation-delay: 1.5s; }
+@keyframes pulseScale {
+  0% { transform: scale(1); opacity: .7; }
+  100% { transform: scale(1.3); opacity: 0; }
+}
+.empty-illustration svg { width: 54px; height: 54px; color: var(--crab); position: relative; z-index: 2; }
+.empty-title {
+  font-family: 'Bricolage Grotesque', sans-serif;
+  font-weight: 800;
+  font-size: 22px;
+  letter-spacing: -.025em;
+  margin-bottom: 6px;
+}
+.empty-text {
+  font-size: 13.5px;
+  color: var(--ink-2);
+  line-height: 1.5;
+  max-width: 280px;
+  margin-bottom: 20px;
+}
+.empty-state .btn { flex: none; padding: 0 22px; }
+
+/* ================================================================
+   SEARCH DROPDOWN
+   ================================================================ */
+
+.search-dropdown {
+  position: absolute;
+  left: 14px; right: 14px;
+  top: calc(env(safe-area-inset-top, 0px) + 62px);
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  box-shadow: 0 20px 40px -10px rgba(40,30,20,.25);
+  z-index: 80;
+  overflow: hidden;
+  max-height: 70%;
+  display: none;
+  animation: dropdownIn .2s var(--ease);
+}
+.search-dropdown.show { display: block; }
+@keyframes dropdownIn {
+  from { opacity: 0; transform: translateY(-8px); }
+  to { opacity: 1; transform: none; }
+}
+.sd-section-label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 9.5px;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+  padding: 10px 14px 6px;
+  font-weight: 600;
+}
+.sd-row {
+  padding: 10px 14px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  cursor: pointer;
+}
+.sd-row:active { background: var(--panel-2); }
+.sd-row:hover { background: var(--panel-2); }
+.sd-row-icon {
+  width: 28px; height: 28px;
+  border-radius: 8px;
+  background: var(--bg-2);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--ink-3);
+  flex-shrink: 0;
+}
+.sd-row-icon svg { width: 14px; height: 14px; }
+.sd-row-icon.crab { background: var(--crab); color: #fff; }
+.sd-row-icon.gold { background: var(--gold); color: var(--ink); }
+.sd-row-text {
+  font-size: 13.5px;
+  font-weight: 600;
+  flex: 1;
+}
+.sd-row-text b { display: block; margin-bottom: 1px; }
+.sd-row-text .sub { font-size: 11.5px; color: var(--ink-3); font-weight: 500; }
+.sd-divider { height: 1px; background: var(--border); margin: 4px 0; }
+
+/* ================================================================
+   SHARE SHEET
+   ================================================================ */
+
+.share-backdrop {
+  position: absolute;
+  inset: 0;
+  background: rgba(0,0,0,.4);
+  z-index: 90;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity .25s;
+}
+.share-backdrop.show { opacity: 1; pointer-events: auto; }
+
+.share-sheet {
+  position: absolute;
+  left: 0; right: 0; bottom: 0;
+  background: var(--panel);
+  border-top-left-radius: 20px;
+  border-top-right-radius: 20px;
+  z-index: 91;
+  transform: translateY(100%);
+  transition: transform .3s var(--ease);
+  padding: 12px 14px calc(env(safe-area-inset-bottom, 16px) + 16px);
+}
+.share-sheet.show { transform: translateY(0); }
+.share-sheet-handle {
+  width: 40px; height: 4px;
+  background: var(--border-2);
+  border-radius: 2px;
+  margin: 0 auto 12px;
+}
+.share-header {
+  padding: 0 6px 14px;
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+}
+.share-header h3 {
+  font-family: 'Bricolage Grotesque', sans-serif;
+  font-weight: 700;
+  font-size: 17px;
+  letter-spacing: -.02em;
+  margin: 0;
+}
+.share-header .close {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--crab);
+}
+.share-preview {
+  background: var(--bg-2);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 12px;
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  margin-bottom: 14px;
+}
+.share-preview-img {
+  width: 48px; height: 48px;
+  border-radius: 10px;
+  background-size: cover;
+  background-position: center;
+}
+.share-preview-name {
+  font-family: 'Bricolage Grotesque', sans-serif;
+  font-weight: 700;
+  font-size: 14.5px;
+  letter-spacing: -.01em;
+}
+.share-preview-url {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10.5px;
+  color: var(--ink-3);
+  margin-top: 2px;
+}
+.share-apps {
+  display: flex;
+  gap: 10px;
+  overflow-x: auto;
+  padding: 0 0 10px;
+  margin-bottom: 6px;
+}
+.share-app {
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  width: 72px;
+}
+.share-app-icon {
+  width: 56px; height: 56px;
+  border-radius: 14px;
+  display: flex; align-items: center; justify-content: center;
+  color: #fff;
+  font-size: 26px;
+}
+.share-app-icon.imessage { background: linear-gradient(135deg, #34d058, #129c33); }
+.share-app-icon.mail { background: linear-gradient(135deg, #6eb5ff, #1d7aff); }
+.share-app-icon.ig { background: linear-gradient(135deg, #fd5, #f58, #c78); }
+.share-app-icon.tw { background: #000; }
+.share-app-icon.fb { background: #1877f2; }
+.share-app-label { font-size: 11px; font-weight: 500; text-align: center; }
+.share-actions {
+  padding-top: 8px;
+  border-top: 1px solid var(--border);
+}
+.share-action {
+  padding: 14px 8px;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  cursor: pointer;
+  border-bottom: 1px solid var(--border);
+}
+.share-action:last-child { border-bottom: none; }
+.share-action:active { background: var(--panel-2); }
+.share-action-ic {
+  width: 32px; height: 32px;
+  border-radius: 8px;
+  background: var(--bg-2);
+  display: flex; align-items: center; justify-content: center;
+  color: var(--ink);
+  flex-shrink: 0;
+}
+.share-action-ic svg { width: 16px; height: 16px; }
+.share-action-text {
+  font-size: 14.5px;
+  font-weight: 600;
+  flex: 1;
+}
+
+/* ================================================================
+   SAVED STAR BADGE on map markers
+   ================================================================ */
+
+.marker-pin.saved {
+  position: relative;
+}
+.marker-pin .saved-badge {
+  position: absolute;
+  top: -4px; right: -4px;
+  width: 18px; height: 18px;
+  background: var(--gold);
+  border-radius: 50%;
+  border: 2px solid #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--ink);
+}
+.marker-pin .saved-badge svg { width: 9px; height: 9px; }
+
+/* ================================================================
+   LISTS CAROUSEL
+   ================================================================ */
+
+.featured-carousel {
+  position: relative;
+  border-radius: 18px;
+  overflow: hidden;
+  height: 200px;
+  margin-bottom: 14px;
+}
+.featured-carousel .slide {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  transition: opacity .5s var(--ease);
+  cursor: pointer;
+}
+.featured-carousel .slide.active { opacity: 1; }
+.featured-carousel .slide-img {
+  position: absolute; inset: 0;
+  background-size: cover;
+  background-position: center;
+}
+.featured-carousel .slide-img::before {
+  content: '';
+  position: absolute; inset: 0;
+  background: linear-gradient(180deg, transparent 40%, rgba(26,22,18,.8) 100%);
+}
+.featured-carousel .slide-body {
+  position: absolute; left: 0; right: 0; bottom: 0;
+  padding: 18px;
+  color: #fff;
+  z-index: 2;
+}
+.carousel-dots {
+  position: absolute;
+  bottom: 10px; right: 14px;
+  display: flex;
+  gap: 5px;
+  z-index: 3;
+}
+.carousel-dot {
+  width: 6px; height: 6px;
+  border-radius: 50%;
+  background: rgba(255,255,255,.5);
+  transition: all .25s;
+}
+.carousel-dot.active { width: 20px; background: #fff; border-radius: 3px; }
+
+/* ================================================================
+   EDIT PROFILE SCREEN
+   ================================================================ */
+
+.edit-body { padding: 16px 18px calc(var(--tab-h) + 24px); flex: 1; overflow-y: auto; }
+.edit-avatar-picker {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 14px;
+  margin-bottom: 26px;
+  padding: 20px 0 10px;
+}
+.edit-avatar-big {
+  width: 96px; height: 96px;
+  border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-family: 'Bricolage Grotesque', sans-serif;
+  font-weight: 800;
+  font-size: 36px;
+  color: #fff;
+  letter-spacing: -.03em;
+  box-shadow: 0 4px 16px rgba(0,0,0,.15);
+}
+.edit-avatar-big.g1 { background: linear-gradient(135deg, var(--crab), var(--gold)); }
+.edit-avatar-big.g2 { background: linear-gradient(135deg, #5a89c8, #8a5aa8); }
+.edit-avatar-big.g3 { background: linear-gradient(135deg, var(--green), #3b5b7d); }
+.edit-avatar-big.g4 { background: linear-gradient(135deg, #1a1612, #403a31); }
+.edit-avatar-swatches {
+  display: flex;
+  gap: 8px;
+}
+.edit-swatch {
+  width: 32px; height: 32px;
+  border-radius: 50%;
+  cursor: pointer;
+  border: 2px solid transparent;
+}
+.edit-swatch.active { border-color: var(--ink); }
+.edit-swatch.g1 { background: linear-gradient(135deg, var(--crab), var(--gold)); }
+.edit-swatch.g2 { background: linear-gradient(135deg, #5a89c8, #8a5aa8); }
+.edit-swatch.g3 { background: linear-gradient(135deg, var(--green), #3b5b7d); }
+.edit-swatch.g4 { background: linear-gradient(135deg, #1a1612, #403a31); }
+.edit-field {
+  margin-bottom: 12px;
+}
+.edit-field-label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 9.5px;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+  font-weight: 600;
+  margin-bottom: 6px;
+  padding-left: 2px;
+}
+.edit-input {
+  width: 100%;
+  height: 46px;
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 0 14px;
+  font-size: 14.5px;
+  color: var(--ink);
+  font-weight: 500;
+}
+.edit-input.area { height: auto; padding: 12px 14px; min-height: 80px; resize: none; line-height: 1.4; }
+.edit-input:focus { border-color: var(--crab); }
+
+.edit-submit {
+  height: 52px;
+  background: var(--crab);
+  color: #fff;
+  border-radius: 14px;
+  font-weight: 700;
+  font-size: 15px;
+  width: 100%;
+  margin-top: 14px;
+}
+
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { animation-duration: .01ms !important; transition-duration: .01ms !important; }
 }
@@ -1540,7 +2086,23 @@ input, textarea { outline: none; }
 
   <div class="desktop-info">
     <div class="logo">
-      <div class="logo-mark" aria-label="Crabcake">🦀</div>
+      <div class="logo-mark" aria-label="Crabcake">
+        <svg viewBox="0 0 32 32" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+          <ellipse cx="16" cy="18" rx="7" ry="5.5"/>
+          <circle cx="13" cy="11" r="1.8"/>
+          <circle cx="19" cy="11" r="1.8"/>
+          <rect x="12.3" y="12.5" width="1.4" height="2.5" rx=".5"/>
+          <rect x="18.3" y="12.5" width="1.4" height="2.5" rx=".5"/>
+          <path d="M 2 16 Q 2 14 4 14 Q 7 14 9 16 L 9 17 L 6 17 Z"/>
+          <path d="M 2 20 Q 2 22 4 22 Q 7 22 9 20 L 9 19 L 6 19 Z"/>
+          <path d="M 30 16 Q 30 14 28 14 Q 25 14 23 16 L 23 17 L 26 17 Z"/>
+          <path d="M 30 20 Q 30 22 28 22 Q 25 22 23 20 L 23 19 L 26 19 Z"/>
+          <path d="M 10 22 L 8 26" stroke="currentColor" stroke-width="2" stroke-linecap="round" fill="none"/>
+          <path d="M 13 23 L 12 27" stroke="currentColor" stroke-width="2" stroke-linecap="round" fill="none"/>
+          <path d="M 19 23 L 20 27" stroke="currentColor" stroke-width="2" stroke-linecap="round" fill="none"/>
+          <path d="M 22 22 L 24 26" stroke="currentColor" stroke-width="2" stroke-linecap="round" fill="none"/>
+        </svg>
+      </div>
       <div>
         <h1>Crabcake</h1>
         <div class="sub">By the Baltimore Boys</div>
@@ -1568,12 +2130,64 @@ input, textarea { outline: none; }
       </div>
 
       <div class="home-header">
-        <div class="home-logo" aria-label="Crabcake">🦀</div>
+        <div class="home-logo" aria-label="Crabcake">
+          <svg viewBox="0 0 32 32" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+            <ellipse cx="16" cy="18" rx="7" ry="5.5"/>
+            <circle cx="13" cy="11" r="1.8"/>
+            <circle cx="19" cy="11" r="1.8"/>
+            <rect x="12.3" y="12.5" width="1.4" height="2.5" rx=".5"/>
+            <rect x="18.3" y="12.5" width="1.4" height="2.5" rx=".5"/>
+            <path d="M 2 16 Q 2 14 4 14 Q 7 14 9 16 L 9 17 L 6 17 Z"/>
+            <path d="M 2 20 Q 2 22 4 22 Q 7 22 9 20 L 9 19 L 6 19 Z"/>
+            <path d="M 30 16 Q 30 14 28 14 Q 25 14 23 16 L 23 17 L 26 17 Z"/>
+            <path d="M 30 20 Q 30 22 28 22 Q 25 22 23 20 L 23 19 L 26 19 Z"/>
+            <path d="M 10 22 L 8 26" stroke="currentColor" stroke-width="2" stroke-linecap="round" fill="none"/>
+            <path d="M 13 23 L 12 27" stroke="currentColor" stroke-width="2" stroke-linecap="round" fill="none"/>
+            <path d="M 19 23 L 20 27" stroke="currentColor" stroke-width="2" stroke-linecap="round" fill="none"/>
+            <path d="M 22 22 L 24 26" stroke="currentColor" stroke-width="2" stroke-linecap="round" fill="none"/>
+          </svg>
+        </div>
         <div class="home-search">
           <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
-          <input placeholder="Search a spot, city, or zip"/>
+          <input id="searchInput" placeholder="Search a spot, city, or zip"/>
         </div>
         <div class="avatar" data-nav="me">RL</div>
+      </div>
+
+      <div class="search-dropdown" id="searchDropdown">
+        <div class="sd-section-label">RECENT</div>
+        <div class="sd-row" data-nav="spot" data-id="faidleys">
+          <div class="sd-row-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="9"/><polyline points="12 7 12 12 16 14"/></svg></div>
+          <div class="sd-row-text"><b>Faidley's Seafood</b><span class="sub">Baltimore, MD</span></div>
+        </div>
+        <div class="sd-row" data-nav="spot" data-id="thames">
+          <div class="sd-row-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="9"/><polyline points="12 7 12 12 16 14"/></svg></div>
+          <div class="sd-row-text"><b>Thames Street Oyster</b><span class="sub">Baltimore, MD</span></div>
+        </div>
+        <div class="sd-divider"></div>
+        <div class="sd-section-label">SUGGESTED CITIES</div>
+        <div class="sd-row">
+          <div class="sd-row-icon crab"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M9 11a3 3 0 106 0 3 3 0 00-6 0z"/><path d="M12 2a8 8 0 018 8c0 5-8 14-8 14S4 15 4 10a8 8 0 018-8z"/></svg></div>
+          <div class="sd-row-text"><b>Baltimore, MD</b><span class="sub">147 spots · home</span></div>
+        </div>
+        <div class="sd-row">
+          <div class="sd-row-icon gold"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M9 11a3 3 0 106 0 3 3 0 00-6 0z"/><path d="M12 2a8 8 0 018 8c0 5-8 14-8 14S4 15 4 10a8 8 0 018-8z"/></svg></div>
+          <div class="sd-row-text"><b>Boston, MA</b><span class="sub">73 spots</span></div>
+        </div>
+        <div class="sd-row">
+          <div class="sd-row-icon gold"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M9 11a3 3 0 106 0 3 3 0 00-6 0z"/><path d="M12 2a8 8 0 018 8c0 5-8 14-8 14S4 15 4 10a8 8 0 018-8z"/></svg></div>
+          <div class="sd-row-text"><b>New York, NY</b><span class="sub">118 spots</span></div>
+        </div>
+        <div class="sd-divider"></div>
+        <div class="sd-section-label">POPULAR SPOTS</div>
+        <div class="sd-row" data-nav="spot" data-id="neptune">
+          <div class="sd-row-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg></div>
+          <div class="sd-row-text"><b>Neptune Oyster</b><span class="sub">Boston · Boys 9.1</span></div>
+        </div>
+        <div class="sd-row" data-nav="spot" data-id="pearl">
+          <div class="sd-row-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg></div>
+          <div class="sd-row-text"><b>Pearl Oyster Bar</b><span class="sub">NYC · Boys 8.9</span></div>
+        </div>
       </div>
 
       <div class="chips">
@@ -1605,6 +2219,7 @@ input, textarea { outline: none; }
         <div class="sheet expanded" id="sheet">
           <div class="sheet-handle-area" id="sheetHandle">
             <div class="sheet-handle"></div>
+            <div class="sheet-hint"><span class="arrow">↑</span> Drag to open list</div>
           </div>
           <div class="sheet-head">
             <div>
@@ -1756,10 +2371,10 @@ input, textarea { outline: none; }
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="15 18 9 12 15 6"/></svg>
           </button>
           <div class="sd-actions">
-            <button class="icon-btn">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M19 21l-7-5-7 5V5a2 2 0 012-2h10a2 2 0 012 2z"/></svg>
+            <button class="icon-btn" id="bookmarkBtn">
+              <svg id="bookmarkIcon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M19 21l-7-5-7 5V5a2 2 0 012-2h10a2 2 0 012 2z"/></svg>
             </button>
-            <button class="icon-btn">
+            <button class="icon-btn" id="shareBtn">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.6" y1="13.5" x2="15.4" y2="17.5"/><line x1="15.4" y1="6.5" x2="8.6" y2="10.5"/></svg>
             </button>
           </div>
@@ -1886,15 +2501,38 @@ input, textarea { outline: none; }
 
       <div class="lists-content">
         <div class="section-title">
-          Top 5 <span class="all">Updated · Apr 22</span>
+          Featured <span class="all">Updated · Apr 22</span>
         </div>
 
-        <div class="top-feature" style="background-image: var(--ph1);" data-nav="spot" data-id="faidleys">
-          <div class="tf-score"><div class="ring elite lg">9.2</div></div>
-          <div class="top-feature-body">
-            <span class="tf-rank">THE #1 · BALTIMORE</span>
-            <div class="tf-name">Faidley's Seafood</div>
-            <div class="tf-loc">Lexington Market · $$$ · 312 reviews</div>
+        <div class="featured-carousel" id="featCarousel">
+          <div class="slide active" data-nav="spot" data-id="faidleys">
+            <div class="slide-img" style="background-image: var(--ph1);"></div>
+            <div class="slide-body">
+              <span class="tf-rank">THE #1 · BALTIMORE</span>
+              <div class="tf-name">Faidley's Seafood</div>
+              <div class="tf-loc">Lexington Market · $$$ · Boys 9.2</div>
+            </div>
+          </div>
+          <div class="slide" data-nav="spot" data-id="neptune">
+            <div class="slide-img" style="background-image: var(--ph2);"></div>
+            <div class="slide-body">
+              <span class="tf-rank">NEW ENGLAND'S BEST</span>
+              <div class="tf-name">Neptune Oyster</div>
+              <div class="tf-loc">Boston · $$$$ · Boys 9.1</div>
+            </div>
+          </div>
+          <div class="slide" data-nav="spot" data-id="raw167">
+            <div class="slide-img" style="background-image: var(--ph5);"></div>
+            <div class="slide-body">
+              <span class="tf-rank">THE SOUTH'S CHALLENGER</span>
+              <div class="tf-name">167 Raw</div>
+              <div class="tf-loc">Charleston · $$$ · Boys 8.8</div>
+            </div>
+          </div>
+          <div class="carousel-dots">
+            <span class="carousel-dot active"></span>
+            <span class="carousel-dot"></span>
+            <span class="carousel-dot"></span>
           </div>
         </div>
 
@@ -2017,7 +2655,17 @@ input, textarea { outline: none; }
         <div class="avatar" data-nav="me">RL</div>
       </div>
 
-      <div class="saved-content">
+      <div class="saved-content" id="savedContent">
+        <!-- Empty state (hidden by default; shown when list is empty) -->
+        <div class="empty-state" id="savedEmpty" style="display:none;">
+          <div class="empty-illustration">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M19 21l-7-5-7 5V5a2 2 0 012-2h10a2 2 0 012 2z"/></svg>
+          </div>
+          <div class="empty-title">No saved spots yet</div>
+          <div class="empty-text">Tap the bookmark icon on any spot to save it for later. Your want-to-try list shows up here.</div>
+          <button class="btn primary" data-tab-switch="map">Browse the map</button>
+        </div>
+
         <div class="saved-item" data-nav="spot" data-id="thames">
           <div class="sv-img" style="background-image: var(--ph3);"></div>
           <div>
@@ -2088,13 +2736,14 @@ input, textarea { outline: none; }
 
       <div class="me-content">
 
-        <div class="me-card">
+        <div class="me-card" data-nav="edit-profile">
           <div class="me-top">
             <div class="me-ava">RL</div>
-            <div>
+            <div style="flex:1">
               <div class="me-name">Ray Lewis</div>
               <div class="me-sub">Baltimore · 8 cities rated · #52</div>
             </div>
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" style="opacity:.85;"><polyline points="9 18 15 12 9 6"/></svg>
           </div>
           <div class="me-stats">
             <div class="me-stat"><div class="n">24</div><div class="l">Rated</div></div>
@@ -2209,6 +2858,53 @@ input, textarea { outline: none; }
       </div>
     </div>
 
+    <!-- EDIT PROFILE SCREEN -->
+    <div class="screen" data-screen="edit-profile">
+      <div class="s-header" style="padding-top: 14px; border-bottom: 1px solid var(--border); padding-bottom: 12px;">
+        <button class="icon-btn" data-nav="back">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="15 18 9 12 15 6"/></svg>
+        </button>
+        <h1 class="s-title">Edit profile</h1>
+        <button class="icon-btn" style="background: var(--crab); color: #fff; border-color: var(--crab); width: auto; padding: 0 14px; border-radius: 18px; font-size: 13px; font-weight: 700;" data-nav="back">
+          Save
+        </button>
+      </div>
+
+      <div class="edit-body">
+        <div class="edit-avatar-picker">
+          <div class="edit-avatar-big g1" id="editAvatarBig">RL</div>
+          <div class="edit-avatar-swatches" id="avatarSwatches">
+            <div class="edit-swatch g1 active" data-swatch="g1"></div>
+            <div class="edit-swatch g2" data-swatch="g2"></div>
+            <div class="edit-swatch g3" data-swatch="g3"></div>
+            <div class="edit-swatch g4" data-swatch="g4"></div>
+          </div>
+        </div>
+
+        <div class="edit-field">
+          <div class="edit-field-label">Display name</div>
+          <input class="edit-input" id="editName" value="Ray Lewis"/>
+        </div>
+
+        <div class="edit-field">
+          <div class="edit-field-label">Home city</div>
+          <input class="edit-input" value="Baltimore, MD"/>
+        </div>
+
+        <div class="edit-field">
+          <div class="edit-field-label">Bio</div>
+          <textarea class="edit-input area" placeholder="Tell people your crab cake philosophy.">Born in Lakeland. On a mission to rank every crab cake in America.</textarea>
+        </div>
+
+        <div class="edit-field">
+          <div class="edit-field-label">Jersey number</div>
+          <input class="edit-input" value="52"/>
+        </div>
+
+        <button class="edit-submit" data-nav="back">Save changes</button>
+      </div>
+    </div>
+
     <!-- RATE MODAL -->
     <div class="screen modal" data-screen="rate">
       <div class="status-bar">
@@ -2275,6 +2971,71 @@ input, textarea { outline: none; }
         </div>
 
         <button class="rate-submit" data-nav="back">Post rating →</button>
+      </div>
+    </div>
+
+    <!-- GLOBAL OVERLAYS -->
+    <div class="toast" id="toast">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg>
+      <span id="toastText">Saved</span>
+    </div>
+
+    <div class="success-overlay" id="successOverlay">
+      <div class="success-crab">🦀</div>
+      <div class="success-title">Posted to the<br>community.</div>
+      <div class="success-sub">Your rating is live and moving the crowd score.</div>
+      <div class="success-score">Your score · <b id="successScore">8.4</b></div>
+    </div>
+
+    <div class="share-backdrop" id="shareBackdrop"></div>
+    <div class="share-sheet" id="shareSheet">
+      <div class="share-sheet-handle"></div>
+      <div class="share-header">
+        <h3>Share this spot</h3>
+        <span class="close" id="shareClose">Done</span>
+      </div>
+      <div class="share-preview">
+        <div class="share-preview-img" style="background-image: var(--ph1);"></div>
+        <div>
+          <div class="share-preview-name">Faidley's Seafood</div>
+          <div class="share-preview-url">crabcake.app/s/faidleys</div>
+        </div>
+      </div>
+      <div class="share-apps">
+        <div class="share-app">
+          <div class="share-app-icon imessage">💬</div>
+          <div class="share-app-label">Messages</div>
+        </div>
+        <div class="share-app">
+          <div class="share-app-icon mail">✉️</div>
+          <div class="share-app-label">Mail</div>
+        </div>
+        <div class="share-app">
+          <div class="share-app-icon ig">📷</div>
+          <div class="share-app-label">Instagram</div>
+        </div>
+        <div class="share-app">
+          <div class="share-app-icon tw">𝕏</div>
+          <div class="share-app-label">X</div>
+        </div>
+        <div class="share-app">
+          <div class="share-app-icon fb">f</div>
+          <div class="share-app-label">Facebook</div>
+        </div>
+      </div>
+      <div class="share-actions">
+        <div class="share-action" id="copyLink">
+          <div class="share-action-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M10 13a5 5 0 007.54.54l3-3a5 5 0 00-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 00-7.54-.54l-3 3a5 5 0 007.07 7.07l1.71-1.71"/></svg></div>
+          <div class="share-action-text">Copy link</div>
+        </div>
+        <div class="share-action">
+          <div class="share-action-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="3" y="3" width="18" height="18" rx="2"/><line x1="9" y1="9" x2="15" y2="15"/><line x1="15" y1="9" x2="9" y2="15"/></svg></div>
+          <div class="share-action-text">Add to home screen</div>
+        </div>
+        <div class="share-action">
+          <div class="share-action-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg></div>
+          <div class="share-action-text">Save to bookmarks</div>
+        </div>
       </div>
     </div>
 
@@ -2688,8 +3449,279 @@ if (document.readyState === 'loading') {
   });
 } else {
   window.addEventListener('load', initMap);
-  // also try immediately in case load already fired
   setTimeout(initMap, 50);
+}
+
+// ================================================================
+// SAVED SPOTS — state
+// ================================================================
+let savedSpots = new Set(['thames', 'pearl', 'peche', 'raw167', 'joes']);
+
+function updateSavedMarkers() {
+  Object.keys(markers).forEach(id => {
+    const m = markers[id];
+    if (!m || !spots[id]) return;
+    const s = spots[id];
+    const cls = scoreClass(s.bv);
+    const sel = id === 'faidleys' ? ' selected' : '';
+    const starHtml = savedSpots.has(id) ?
+      '<div class="saved-badge"><svg viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg></div>' : '';
+    const iconHtml = '<div class="marker-pin ' + cls + sel + '">' + s.bv + starHtml + '</div>';
+    const newIcon = L.divIcon({
+      className: 'marker-container',
+      html: iconHtml,
+      iconSize: [44, 44],
+      iconAnchor: [22, 22]
+    });
+    m.setIcon(newIcon);
+  });
+}
+
+// Override initMap's marker-adding to include saved badges
+const originalInitMap = initMap;
+initMap = function() {
+  originalInitMap();
+  if (leafletMap) setTimeout(updateSavedMarkers, 100);
+};
+
+// ================================================================
+// ANIMATED SCORE COUNT-UP on spot detail
+// ================================================================
+function animateScore(el, to, duration) {
+  if (!el) return;
+  const start = performance.now();
+  const from = 0;
+  const target = parseFloat(to);
+  function frame(t) {
+    const p = Math.min(1, (t - start) / duration);
+    const ease = 1 - Math.pow(1 - p, 3);
+    const val = (from + (target - from) * ease).toFixed(1);
+    el.textContent = val;
+    if (p < 1) requestAnimationFrame(frame);
+    else el.textContent = target.toFixed(1);
+  }
+  requestAnimationFrame(frame);
+}
+
+// Hook into populateSpot to trigger animation
+const originalPopulateSpot = populateSpot;
+populateSpot = function(id) {
+  originalPopulateSpot(id);
+  const s = spots[id];
+  if (!s) return;
+  // Reset and animate
+  const bv = document.getElementById('spotBV');
+  const c = document.getElementById('spotC');
+  if (bv && c) {
+    setTimeout(() => {
+      animateScore(bv, s.bv, 600);
+      animateScore(c, s.c, 700);
+    }, 100);
+  }
+  // Sync bookmark state
+  const bookmarkIcon = document.getElementById('bookmarkIcon');
+  if (bookmarkIcon) {
+    if (savedSpots.has(id)) {
+      bookmarkIcon.setAttribute('fill', 'currentColor');
+      bookmarkIcon.style.color = 'var(--gold)';
+    } else {
+      bookmarkIcon.setAttribute('fill', 'none');
+      bookmarkIcon.style.color = 'var(--ink)';
+    }
+  }
+};
+
+// ================================================================
+// TOAST
+// ================================================================
+const toast = document.getElementById('toast');
+const toastText = document.getElementById('toastText');
+let toastTimeout;
+function showToast(text) {
+  if (!toast || !toastText) return;
+  toastText.textContent = text;
+  toast.classList.add('show');
+  clearTimeout(toastTimeout);
+  toastTimeout = setTimeout(() => toast.classList.remove('show'), 2200);
+}
+
+// ================================================================
+// BOOKMARK TOGGLE
+// ================================================================
+const bookmarkBtn = document.getElementById('bookmarkBtn');
+if (bookmarkBtn) {
+  bookmarkBtn.addEventListener('click', () => {
+    const id = stack.lastSpotId;
+    if (!id) return;
+    const isSaved = savedSpots.has(id);
+    if (isSaved) {
+      savedSpots.delete(id);
+      showToast('Removed from saved');
+    } else {
+      savedSpots.add(id);
+      showToast('Saved to want-to-try');
+    }
+    // Update icon
+    const icon = document.getElementById('bookmarkIcon');
+    if (icon) {
+      if (!isSaved) {
+        icon.setAttribute('fill', 'currentColor');
+        icon.style.color = 'var(--gold)';
+      } else {
+        icon.setAttribute('fill', 'none');
+        icon.style.color = 'var(--ink)';
+      }
+    }
+    // Update map markers
+    updateSavedMarkers();
+    // Haptic
+    if (navigator.vibrate) navigator.vibrate(10);
+  });
+}
+
+// ================================================================
+// SHARE SHEET
+// ================================================================
+const shareBtn = document.getElementById('shareBtn');
+const shareSheet = document.getElementById('shareSheet');
+const shareBackdrop = document.getElementById('shareBackdrop');
+const shareClose = document.getElementById('shareClose');
+function openShare() {
+  if (shareSheet && shareBackdrop) {
+    shareSheet.classList.add('show');
+    shareBackdrop.classList.add('show');
+  }
+}
+function closeShare() {
+  if (shareSheet && shareBackdrop) {
+    shareSheet.classList.remove('show');
+    shareBackdrop.classList.remove('show');
+  }
+}
+if (shareBtn) shareBtn.addEventListener('click', openShare);
+if (shareClose) shareClose.addEventListener('click', closeShare);
+if (shareBackdrop) shareBackdrop.addEventListener('click', closeShare);
+
+const copyLink = document.getElementById('copyLink');
+if (copyLink) copyLink.addEventListener('click', () => {
+  closeShare();
+  setTimeout(() => showToast('Link copied'), 200);
+});
+
+// ================================================================
+// SEARCH DROPDOWN
+// ================================================================
+const searchInput = document.getElementById('searchInput');
+const searchDropdown = document.getElementById('searchDropdown');
+if (searchInput && searchDropdown) {
+  searchInput.addEventListener('focus', () => searchDropdown.classList.add('show'));
+  searchInput.addEventListener('blur', () => setTimeout(() => searchDropdown.classList.remove('show'), 200));
+}
+
+// ================================================================
+// POST-RATING SUCCESS
+// ================================================================
+const successOverlay = document.getElementById('successOverlay');
+const successScore = document.getElementById('successScore');
+
+// Intercept the rate-submit button to show success
+const rateSubmit = document.querySelector('.rate-submit');
+if (rateSubmit) {
+  // Remove the data-nav="back" so we can intercept
+  rateSubmit.removeAttribute('data-nav');
+  rateSubmit.addEventListener('click', (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    const score = document.getElementById('dialNum').textContent;
+    if (successScore) successScore.textContent = score;
+    if (successOverlay) successOverlay.classList.add('show');
+    if (navigator.vibrate) navigator.vibrate([15, 50, 30]);
+    setTimeout(() => {
+      if (successOverlay) successOverlay.classList.remove('show');
+      setTimeout(goBack, 400);
+    }, 1800);
+  }, true);
+}
+
+// ================================================================
+// HAPTIC on rate dial
+// ================================================================
+const dialThumb2 = document.getElementById('dialThumb');
+if (dialThumb2) {
+  let lastScore = '8.4';
+  const origNum = document.getElementById('dialNum');
+  // Watch for changes to trigger vibration
+  const numObserver = new MutationObserver(() => {
+    const current = origNum.textContent;
+    if (current !== lastScore) {
+      lastScore = current;
+      if (navigator.vibrate) navigator.vibrate(3);
+    }
+  });
+  if (origNum) numObserver.observe(origNum, { childList: true, characterData: true, subtree: true });
+}
+
+// ================================================================
+// EMPTY-STATE toggle for Saved
+// ================================================================
+document.querySelectorAll('[data-tab-switch]').forEach(el => {
+  el.addEventListener('click', () => switchTab(el.dataset.tabSwitch));
+});
+
+// ================================================================
+// LISTS FEATURED CAROUSEL
+// ================================================================
+const carousel = document.getElementById('featCarousel');
+if (carousel) {
+  const slides = carousel.querySelectorAll('.slide');
+  const dots = carousel.querySelectorAll('.carousel-dot');
+  let curIdx = 0;
+  let carouselInterval;
+
+  function setSlide(i) {
+    slides.forEach(s => s.classList.remove('active'));
+    dots.forEach(d => d.classList.remove('active'));
+    if (slides[i]) slides[i].classList.add('active');
+    if (dots[i]) dots[i].classList.add('active');
+    curIdx = i;
+  }
+
+  function advance() {
+    setSlide((curIdx + 1) % slides.length);
+  }
+
+  carouselInterval = setInterval(advance, 4500);
+
+  dots.forEach((d, i) => d.addEventListener('click', (e) => {
+    e.stopPropagation();
+    setSlide(i);
+    clearInterval(carouselInterval);
+    carouselInterval = setInterval(advance, 4500);
+  }));
+}
+
+// ================================================================
+// EDIT PROFILE avatar swatches
+// ================================================================
+const avatarSwatches = document.getElementById('avatarSwatches');
+const editAvatarBig = document.getElementById('editAvatarBig');
+if (avatarSwatches && editAvatarBig) {
+  avatarSwatches.querySelectorAll('.edit-swatch').forEach(s => {
+    s.addEventListener('click', () => {
+      avatarSwatches.querySelectorAll('.edit-swatch').forEach(x => x.classList.remove('active'));
+      s.classList.add('active');
+      editAvatarBig.className = 'edit-avatar-big ' + s.dataset.swatch;
+    });
+  });
+}
+// Name input → update avatar initials live
+const editName = document.getElementById('editName');
+if (editName && editAvatarBig) {
+  editName.addEventListener('input', () => {
+    const parts = editName.value.trim().split(/\s+/);
+    const initials = parts.length > 1 ? (parts[0][0] + parts[parts.length - 1][0]) : (parts[0] || '').slice(0, 2);
+    editAvatarBig.textContent = initials.toUpperCase() || 'RL';
+  });
 }
 </script>
 
