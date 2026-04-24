@@ -11,6 +11,8 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400..800&family=Manrope:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin=""/>
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin="" defer></script>
 
 <style>
 /* ================================================================
@@ -238,22 +240,15 @@ input, textarea { outline: none; }
 .screen.modal.active { transform: translateY(0); z-index: 30; }
 .screen.modal.behind { transform: translateY(100%); z-index: 10; filter: none; }
 
-.status-bar {
-  height: 44px;
-  padding: 14px 24px 0;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  font-family: 'Manrope', sans-serif;
-  font-weight: 700;
-  font-size: 14px;
-  color: var(--ink);
-  flex-shrink: 0;
-  z-index: 50;
-  pointer-events: none;
+/* Status bar hidden — real phone/browser status shows through safe-area */
+.status-bar { display: none; }
+.status-icons { display: none; }
+
+/* Top safe-area padding on every screen */
+.screen { padding-top: env(safe-area-inset-top, 0px); }
+@media (min-width: 720px) {
+  .screen { padding-top: 46px; } /* clearance for phone-mockup notch */
 }
-.status-icons { display: flex; gap: 6px; align-items: center; }
-.status-icons svg { color: var(--ink); }
 
 /* ================================================================
    SHARED HEADER / BUTTONS
@@ -393,10 +388,65 @@ input, textarea { outline: none; }
   position: relative;
   overflow: hidden;
 }
-.map-wrap svg.map-bg {
-  width: 100%; height: 100%;
-  display: block;
-  user-select: none;
+#leafletMap {
+  width: 100%;
+  height: 100%;
+  background: var(--bg-2);
+}
+.leaflet-container {
+  font-family: 'Manrope', sans-serif !important;
+  background: var(--bg-2) !important;
+}
+.leaflet-control-attribution {
+  font-size: 9px !important;
+  background: rgba(255,255,255,.7) !important;
+  color: var(--ink-3) !important;
+  padding: 2px 6px !important;
+}
+[data-theme="dark"] .leaflet-control-attribution {
+  background: rgba(20,18,15,.7) !important;
+}
+[data-theme="dark"] .leaflet-control-attribution a { color: var(--ink-2) !important; }
+
+/* Custom marker pins (match our ring style) */
+.marker-pin {
+  width: 44px; height: 44px;
+  border-radius: 50%;
+  border: 2.5px solid #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: 'Bricolage Grotesque', sans-serif;
+  font-weight: 800;
+  font-size: 14px;
+  letter-spacing: -.03em;
+  box-shadow: 0 3px 8px rgba(0,0,0,.3);
+  transition: transform .15s var(--ease);
+  cursor: pointer;
+}
+.marker-pin:active { transform: scale(.92); }
+.marker-pin.elite { background: var(--gold); color: var(--ink); }
+.marker-pin.great { background: var(--crab); color: #fff; }
+.marker-pin.good  { background: #c98551; color: #fff; }
+.marker-pin.ok    { background: var(--ink-3); color: #fff; }
+.marker-pin.selected {
+  transform: scale(1.2);
+  z-index: 1000 !important;
+}
+.marker-container {
+  background: transparent !important;
+  border: none !important;
+}
+/* "Home" highlight ring for Baltimore */
+.home-pulse {
+  background: rgba(232,61,53,.12);
+  border: 2px dashed var(--crab);
+  border-radius: 50%;
+  animation: homePulse 3s ease-in-out infinite;
+}
+@keyframes homePulse {
+  0%, 100% { opacity: .7; transform: scale(1); }
+  50% { opacity: 1; transform: scale(1.05); }
 }
 
 .map-floaters-top {
@@ -1555,129 +1605,7 @@ input, textarea { outline: none; }
           </button>
         </div>
 
-        <svg class="map-bg" viewBox="0 0 414 720" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg">
-          <defs>
-            <pattern id="g1" patternUnits="userSpaceOnUse" width="24" height="24">
-              <path d="M 24 0 L 0 0 0 24" fill="none" stroke="#d8cfb5" stroke-width=".4"/>
-            </pattern>
-            <filter id="ps"><feDropShadow dx="0" dy="2" stdDeviation="1.5" flood-color="#000" flood-opacity=".25"/></filter>
-          </defs>
-          <rect width="414" height="720" fill="#eadfc9"/>
-          <rect width="414" height="720" fill="url(#g1)"/>
-
-          <rect x="0" y="0" width="52" height="720" fill="#b5d0dc" opacity=".85"/>
-          <rect x="380" y="0" width="34" height="720" fill="#b5d0dc" opacity=".85"/>
-          <path d="M 160 555 Q 210 585 290 560 L 310 720 L 110 720 Z" fill="#b5d0dc" opacity=".85"/>
-          <ellipse cx="265" cy="160" rx="22" ry="11" fill="#b5d0dc" opacity=".85"/>
-          <ellipse cx="243" cy="185" rx="16" ry="8" fill="#b5d0dc" opacity=".85"/>
-
-          <path d="M 52 185 L 60 160 L 88 142 L 122 130 L 165 122 L 220 118 L 265 122 L 305 128 L 338 138 L 370 150 L 385 165 L 385 200 L 385 285 L 373 345 L 360 400 L 348 450 L 330 515 L 308 555 L 272 560 L 230 580 L 185 580 L 150 560 L 120 535 L 95 495 L 75 445 L 60 395 L 52 335 L 52 260 Z" fill="#f2e8ce" stroke="#8a7d5e" stroke-width="1.5" opacity=".9"/>
-
-          <g stroke="#c2b892" stroke-width=".6" opacity=".55" fill="none">
-            <line x1="88" y1="142" x2="92" y2="425"/>
-            <line x1="125" y1="130" x2="130" y2="465"/>
-            <line x1="162" y1="122" x2="168" y2="510"/>
-            <line x1="212" y1="120" x2="218" y2="552"/>
-            <line x1="262" y1="122" x2="268" y2="540"/>
-            <line x1="308" y1="128" x2="314" y2="545"/>
-            <line x1="338" y1="138" x2="344" y2="510"/>
-            <line x1="370" y1="150" x2="368" y2="440"/>
-            <path d="M 55 265 L 385 285"/>
-            <path d="M 60 315 L 373 345"/>
-            <path d="M 68 370 L 360 400"/>
-            <path d="M 78 425 L 348 450"/>
-          </g>
-
-          <path d="M 212 120 Q 218 260 223 400 Q 230 500 240 570" fill="none" stroke="#7ca6b8" stroke-width="1.3" opacity=".55"/>
-
-          <g stroke="#c2b892" stroke-width=".8" stroke-dasharray="3 3" opacity=".5" fill="none">
-            <path d="M 52 240 L 385 265"/>
-            <path d="M 170 128 Q 195 320 215 575"/>
-          </g>
-
-          <g font-family="JetBrains Mono, monospace" font-size="7.5" fill="#6b5f40" letter-spacing="1" font-weight="500">
-            <text x="75" y="185">SEATTLE</text>
-            <text x="60" y="290">SAN FRANCISCO</text>
-            <text x="62" y="375">LOS ANGELES</text>
-            <text x="200" y="298">DENVER</text>
-            <text x="220" y="520">AUSTIN</text>
-            <text x="262" y="248">CHICAGO</text>
-            <text x="342" y="210">BOSTON</text>
-            <text x="342" y="252">NEW YORK</text>
-            <text x="310" y="296">BALTIMORE</text>
-            <text x="325" y="325">WASHINGTON DC</text>
-            <text x="360" y="465">MIAMI</text>
-            <text x="315" y="420">CHARLESTON</text>
-            <text x="245" y="490">N.O.</text>
-          </g>
-
-          <circle cx="337" cy="295" r="34" fill="none" stroke="#e83d35" stroke-width="1.2" stroke-dasharray="3 4" opacity=".6"/>
-          <text x="312" y="258" font-family="JetBrains Mono, monospace" font-size="7.5" fill="#e83d35" font-weight="700" letter-spacing="1.2">BALTIMORE ◀ YOU</text>
-
-          <g class="pin selected" data-id="faidleys" transform="translate(337 295)" filter="url(#ps)">
-            <circle r="21" fill="#e4b248" stroke="#fff" stroke-width="2.5"/>
-            <text class="pin-label" y="5" text-anchor="middle" fill="#1a1612">9.2</text>
-          </g>
-          <g class="pin" data-id="thames" transform="translate(349 287)" filter="url(#ps)">
-            <circle r="17" fill="#e4b248" stroke="#fff" stroke-width="2.5"/>
-            <text class="pin-label" y="5" text-anchor="middle" fill="#1a1612" font-size="12">9.0</text>
-          </g>
-          <g class="pin" data-id="ebbitt" transform="translate(322 322)" filter="url(#ps)">
-            <circle r="18" fill="#e83d35" stroke="#fff" stroke-width="2.5"/>
-            <text class="pin-label" y="5" text-anchor="middle" fill="#fff" font-size="13">8.7</text>
-          </g>
-          <g class="pin" data-id="pearl" transform="translate(352 258)" filter="url(#ps)">
-            <circle r="19" fill="#e83d35" stroke="#fff" stroke-width="2.5"/>
-            <text class="pin-label" y="5" text-anchor="middle" fill="#fff" font-size="13">8.9</text>
-          </g>
-          <g class="pin" data-id="neptune" transform="translate(358 215)" filter="url(#ps)">
-            <circle r="20" fill="#e4b248" stroke="#fff" stroke-width="2.5"/>
-            <text class="pin-label" y="5" text-anchor="middle" fill="#1a1612" font-size="13">9.1</text>
-          </g>
-          <g class="pin" data-id="raw167" transform="translate(312 415)" filter="url(#ps)">
-            <circle r="18" fill="#e83d35" stroke="#fff" stroke-width="2.5"/>
-            <text class="pin-label" y="5" text-anchor="middle" fill="#fff" font-size="13">8.8</text>
-          </g>
-          <g class="pin" data-id="peche" transform="translate(248 510)" filter="url(#ps)">
-            <circle r="18" fill="#e83d35" stroke="#fff" stroke-width="2.5"/>
-            <text class="pin-label" y="5" text-anchor="middle" fill="#fff" font-size="13">8.5</text>
-          </g>
-          <g class="pin" data-id="joes" transform="translate(270 245)" filter="url(#ps)">
-            <circle r="17" fill="#e83d35" stroke="#fff" stroke-width="2.5"/>
-            <text class="pin-label" y="5" text-anchor="middle" fill="#fff" font-size="12">8.2</text>
-          </g>
-          <g class="pin" data-id="swan" transform="translate(68 305)" filter="url(#ps)">
-            <circle r="18" fill="#e83d35" stroke="#fff" stroke-width="2.5"/>
-            <text class="pin-label" y="5" text-anchor="middle" fill="#fff" font-size="13">8.6</text>
-          </g>
-          <g class="pin" data-id="elliot" transform="translate(82 195)" filter="url(#ps)">
-            <circle r="16" fill="#c98551" stroke="#fff" stroke-width="2.5"/>
-            <text class="pin-label" y="5" text-anchor="middle" fill="#fff" font-size="11">7.9</text>
-          </g>
-          <g class="pin" data-id="stone" transform="translate(362 468)" filter="url(#ps)">
-            <circle r="16" fill="#e83d35" stroke="#fff" stroke-width="2.5"/>
-            <text class="pin-label" y="5" text-anchor="middle" fill="#fff" font-size="11">8.0</text>
-          </g>
-          <g class="pin" data-id="clark" transform="translate(230 530)" filter="url(#ps)">
-            <circle r="15" fill="#c98551" stroke="#fff" stroke-width="2.5"/>
-            <text class="pin-label" y="5" text-anchor="middle" fill="#fff" font-size="11">7.6</text>
-          </g>
-          <g class="pin" data-id="water" transform="translate(72 382)" filter="url(#ps)">
-            <circle r="15" fill="#c98551" stroke="#fff" stroke-width="2.5"/>
-            <text class="pin-label" y="5" text-anchor="middle" fill="#fff" font-size="11">7.8</text>
-          </g>
-        </svg>
-
-        <div class="pin-callout" data-nav="spot" data-id="faidleys" style="left: 81%; top: 41%;">
-          <div class="pc-img" style="background-image: var(--ph1);"></div>
-          <div class="pc-body">
-            <div>
-              <div class="pc-name">Faidley's Seafood</div>
-              <div class="pc-hood">Baltimore · #1 in USA</div>
-            </div>
-            <div class="ring sm elite">9.2</div>
-          </div>
-        </div>
+        <div id="leafletMap"></div>
 
         <div class="sheet" id="sheet">
           <div class="sheet-handle-area" id="sheetHandle">
@@ -1856,7 +1784,6 @@ input, textarea { outline: none; }
               <div class="ring lg great" id="spotBV">9.2</div>
               <div class="meta">
                 <div class="t">Baltimore Boys</div>
-                <div class="h">Editor score</div>
                 <div class="s">Broiled · 04·15·26</div>
               </div>
             </div>
@@ -1864,8 +1791,7 @@ input, textarea { outline: none; }
               <div class="ring lg elite" id="spotC">8.7</div>
               <div class="meta">
                 <div class="t">Community</div>
-                <div class="h">312 reviews</div>
-                <div class="s">89% rated 8+</div>
+                <div class="s">312 reviews · 89% ≥ 8</div>
               </div>
             </div>
           </div>
@@ -2385,19 +2311,19 @@ input, textarea { outline: none; }
 
 <script>
 const spots = {
-  faidleys: { name: "Faidley's Seafood",     loc: "Baltimore, MD",     bv: 9.2, c: 8.7, est: "1886", photo: "--ph1", sub: "Lexington Market · $$$" },
-  thames:   { name: "Thames Street Oyster",  loc: "Baltimore, MD",     bv: 9.0, c: 8.5, est: "1989", photo: "--ph3", sub: "Fells Point · $$$$" },
-  neptune:  { name: "Neptune Oyster",        loc: "Boston, MA",        bv: 9.1, c: 8.8, est: "2004", photo: "--ph2", sub: "North End · $$$$" },
-  pearl:    { name: "Pearl Oyster Bar",      loc: "New York, NY",      bv: 8.9, c: 8.4, est: "1997", photo: "--ph4", sub: "West Village · $$$" },
-  raw167:   { name: "167 Raw",               loc: "Charleston, SC",    bv: 8.8, c: 8.5, est: "2014", photo: "--ph5", sub: "King Street · $$$" },
-  ebbitt:   { name: "Old Ebbitt Grill",      loc: "Washington, DC",    bv: 8.7, c: 8.2, est: "1856", photo: "--ph6", sub: "Downtown · $$$" },
-  swan:     { name: "Swan Oyster Depot",     loc: "San Francisco, CA", bv: 8.6, c: 8.9, est: "1912", photo: "--ph1", sub: "Polk St · $$" },
-  peche:    { name: "Pêche Seafood Grill",   loc: "New Orleans, LA",   bv: 8.5, c: 8.3, est: "2013", photo: "--ph3", sub: "Warehouse District · $$$" },
-  joes:     { name: "Joe's Seafood",         loc: "Chicago, IL",       bv: 8.2, c: 8.0, est: "2000", photo: "--ph4", sub: "Gold Coast · $$$" },
-  stone:    { name: "Joe's Stone Crab",      loc: "Miami, FL",         bv: 8.0, c: 8.3, est: "1913", photo: "--ph5", sub: "South Beach · $$$$" },
-  elliot:   { name: "Elliot's Oyster House", loc: "Seattle, WA",       bv: 7.9, c: 7.6, est: "1975", photo: "--ph2", sub: "Waterfront · $$$" },
-  clark:    { name: "Clark's Oyster Bar",    loc: "Austin, TX",        bv: 7.6, c: 7.9, est: "2012", photo: "--ph6", sub: "West 6th · $$" },
-  water:    { name: "Water Grill",           loc: "Los Angeles, CA",   bv: 7.8, c: 7.9, est: "1989", photo: "--ph1", sub: "DTLA · $$$" }
+  faidleys: { name: "Faidley's Seafood",     loc: "Baltimore, MD",     bv: 9.2, c: 8.7, est: "1886", photo: "--ph1", sub: "Lexington Market · $$$",      ll: [39.2923, -76.6213] },
+  thames:   { name: "Thames Street Oyster",  loc: "Baltimore, MD",     bv: 9.0, c: 8.5, est: "1989", photo: "--ph3", sub: "Fells Point · $$$$",          ll: [39.2822, -76.5917] },
+  neptune:  { name: "Neptune Oyster",        loc: "Boston, MA",        bv: 9.1, c: 8.8, est: "2004", photo: "--ph2", sub: "North End · $$$$",            ll: [42.3611, -71.0548] },
+  pearl:    { name: "Pearl Oyster Bar",      loc: "New York, NY",      bv: 8.9, c: 8.4, est: "1997", photo: "--ph4", sub: "West Village · $$$",          ll: [40.7345, -74.0048] },
+  raw167:   { name: "167 Raw",               loc: "Charleston, SC",    bv: 8.8, c: 8.5, est: "2014", photo: "--ph5", sub: "King Street · $$$",           ll: [32.7808, -79.9311] },
+  ebbitt:   { name: "Old Ebbitt Grill",      loc: "Washington, DC",    bv: 8.7, c: 8.2, est: "1856", photo: "--ph6", sub: "Downtown · $$$",              ll: [38.8963, -77.0342] },
+  swan:     { name: "Swan Oyster Depot",     loc: "San Francisco, CA", bv: 8.6, c: 8.9, est: "1912", photo: "--ph1", sub: "Polk St · $$",                ll: [37.7922, -122.4213] },
+  peche:    { name: "Pêche Seafood Grill",   loc: "New Orleans, LA",   bv: 8.5, c: 8.3, est: "2013", photo: "--ph3", sub: "Warehouse District · $$$",    ll: [29.9455, -90.0709] },
+  joes:     { name: "Joe's Seafood",         loc: "Chicago, IL",       bv: 8.2, c: 8.0, est: "2000", photo: "--ph4", sub: "Gold Coast · $$$",             ll: [41.8908, -87.6245] },
+  stone:    { name: "Joe's Stone Crab",      loc: "Miami, FL",         bv: 8.0, c: 8.3, est: "1913", photo: "--ph5", sub: "South Beach · $$$$",          ll: [25.7769, -80.1339] },
+  elliot:   { name: "Elliot's Oyster House", loc: "Seattle, WA",       bv: 7.9, c: 7.6, est: "1975", photo: "--ph2", sub: "Waterfront · $$$",            ll: [47.6036, -122.3378] },
+  clark:    { name: "Clark's Oyster Bar",    loc: "Austin, TX",        bv: 7.6, c: 7.9, est: "2012", photo: "--ph6", sub: "West 6th · $$",               ll: [30.2691, -97.7541] },
+  water:    { name: "Water Grill",           loc: "Los Angeles, CA",   bv: 7.8, c: 7.9, est: "1989", photo: "--ph1", sub: "DTLA · $$$",                  ll: [34.0481, -118.2544] }
 };
 
 function scoreClass(s) {
@@ -2578,6 +2504,115 @@ function handleHash() {
 }
 handleHash();
 window.addEventListener('hashchange', handleHash);
+
+// ================================================================
+// LEAFLET MAP — real map tiles + custom markers
+// ================================================================
+let leafletMap = null;
+let tileLayer = null;
+let markers = {};
+
+const tileLight = 'https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png';
+const tileDark  = 'https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png';
+
+function currentTileUrl() {
+  return document.documentElement.getAttribute('data-theme') === 'dark' ? tileDark : tileLight;
+}
+
+function initMap() {
+  if (typeof L === 'undefined') {
+    // Leaflet not loaded yet — retry
+    setTimeout(initMap, 100);
+    return;
+  }
+  if (leafletMap) return;
+
+  const mapEl = document.getElementById('leafletMap');
+  if (!mapEl) return;
+
+  leafletMap = L.map(mapEl, {
+    center: [39.5, -96],      // center of USA
+    zoom: 4,
+    zoomControl: false,        // we use our own floating buttons
+    attributionControl: true
+  });
+
+  tileLayer = L.tileLayer(currentTileUrl(), {
+    attribution: '© OpenStreetMap · © CARTO',
+    maxZoom: 19,
+    subdomains: 'abcd'
+  }).addTo(leafletMap);
+
+  // Baltimore "home" highlight
+  L.marker([39.2904, -76.6122], {
+    icon: L.divIcon({
+      className: 'marker-container',
+      html: '<div class="home-pulse" style="width:80px;height:80px;"></div>',
+      iconSize: [80, 80],
+      iconAnchor: [40, 40]
+    }),
+    interactive: false,
+    keyboard: false
+  }).addTo(leafletMap);
+
+  // Add a marker for each spot
+  Object.keys(spots).forEach(id => {
+    const s = spots[id];
+    const cls = scoreClass(s.bv);
+    const sel = id === 'faidleys' ? ' selected' : '';
+    const iconHtml = '<div class="marker-pin ' + cls + sel + '">' + s.bv + '</div>';
+    const icon = L.divIcon({
+      className: 'marker-container',
+      html: iconHtml,
+      iconSize: [44, 44],
+      iconAnchor: [22, 22]
+    });
+    const m = L.marker(s.ll, { icon: icon, title: s.name }).addTo(leafletMap);
+    m.on('click', () => {
+      navigateTo('spot', id);
+    });
+    markers[id] = m;
+  });
+}
+
+// Swap tile layer when theme changes
+function updateMapTiles() {
+  if (tileLayer && leafletMap) {
+    tileLayer.setUrl(currentTileUrl());
+  }
+}
+
+// Observe theme changes and update tiles
+const themeObserver = new MutationObserver(() => {
+  updateMapTiles();
+});
+themeObserver.observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme'] });
+
+// Hook the map float buttons
+document.querySelectorAll('.map-float-btn').forEach((btn, i) => {
+  btn.addEventListener('click', () => {
+    if (!leafletMap) return;
+    if (i === 0) {
+      // Locate — fly to Baltimore (home)
+      leafletMap.flyTo([39.29, -76.61], 10, { duration: 1.2 });
+    } else if (i === 1) {
+      leafletMap.zoomIn();
+    } else if (i === 2) {
+      leafletMap.zoomOut();
+    }
+  });
+});
+
+// Init the map after DOM + Leaflet loaded
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', () => {
+    window.addEventListener('load', initMap);
+  });
+} else {
+  window.addEventListener('load', initMap);
+  // also try immediately in case load already fired
+  setTimeout(initMap, 50);
+}
 </script>
 
 </body>
