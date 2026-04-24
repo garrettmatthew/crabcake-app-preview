@@ -527,26 +527,33 @@ input, textarea { outline: none; }
   background: var(--panel);
   border-top-left-radius: 24px;
   border-top-right-radius: 24px;
-  box-shadow: 0 -8px 24px rgba(40,30,20,.08);
-  z-index: 15;
-  max-height: 60%;
+  box-shadow: 0 -12px 32px rgba(40,30,20,.15);
+  z-index: 400;
+  height: 70%;
   display: flex;
   flex-direction: column;
-  transform: translateY(0);
+  transform: translateY(calc(100% - 150px));
   transition: transform .3s var(--ease-out);
+  touch-action: none;
 }
-.sheet.collapsed { transform: translateY(calc(100% - 108px)); }
+.sheet.expanded { transform: translateY(0); }
+.sheet.mid { transform: translateY(40%); }
 .sheet-handle-area {
-  padding: 10px 0 6px;
+  padding: 10px 0 8px;
   display: flex;
   justify-content: center;
   flex-shrink: 0;
+  cursor: grab;
+  user-select: none;
 }
+.sheet-handle-area:active { cursor: grabbing; }
 .sheet-handle {
-  width: 40px; height: 4px;
-  border-radius: 2px;
+  width: 44px; height: 5px;
+  border-radius: 3px;
   background: var(--border-2);
+  transition: background .15s;
 }
+.sheet-handle-area:hover .sheet-handle { background: var(--ink-3); }
 .sheet-head {
   padding: 0 18px 12px;
   display: flex;
@@ -2486,9 +2493,92 @@ if (thumb) {
   track.addEventListener('click', (e) => setDial(e.clientX));
 }
 
+// Bottom sheet — 3 snap positions: peek (default), mid, expanded
 const sheetHandle = document.getElementById('sheetHandle');
 const sheet = document.getElementById('sheet');
-if (sheetHandle) sheetHandle.addEventListener('click', () => sheet.classList.toggle('collapsed'));
+
+function sheetSnap(state) {
+  if (!sheet) return;
+  sheet.classList.remove('expanded', 'mid');
+  if (state === 'expanded') sheet.classList.add('expanded');
+  else if (state === 'mid') sheet.classList.add('mid');
+  // 'peek' is the default (no class)
+  sheet.style.transform = '';
+}
+
+function sheetGetState() {
+  if (!sheet) return 'peek';
+  if (sheet.classList.contains('expanded')) return 'expanded';
+  if (sheet.classList.contains('mid')) return 'mid';
+  return 'peek';
+}
+
+if (sheetHandle && sheet) {
+  // Click handle to cycle states
+  sheetHandle.addEventListener('click', (e) => {
+    const s = sheetGetState();
+    if (s === 'peek') sheetSnap('mid');
+    else if (s === 'mid') sheetSnap('expanded');
+    else sheetSnap('peek');
+  });
+
+  // Drag gesture
+  let dragStartY = 0;
+  let dragStartTop = 0;
+  let dragging = false;
+
+  function dragStart(e) {
+    dragging = true;
+    sheet.style.transition = 'none';
+    const y = e.touches ? e.touches[0].clientY : e.clientY;
+    dragStartY = y;
+    dragStartTop = sheet.getBoundingClientRect().top;
+    e.preventDefault();
+  }
+  function dragMove(e) {
+    if (!dragging) return;
+    const y = e.touches ? e.touches[0].clientY : e.clientY;
+    const dy = y - dragStartY;
+    const newTop = dragStartTop + dy;
+    const parent = sheet.parentElement.getBoundingClientRect();
+    const offsetInParent = newTop - parent.top;
+    const parentHeight = parent.height;
+    const sheetHeight = sheet.offsetHeight;
+    // Constrain between 0 and (parentHeight - 80)
+    const clamped = Math.max(0, Math.min(parentHeight - 80, offsetInParent));
+    sheet.style.transform = 'translateY(' + clamped + 'px)';
+    if (e.cancelable) e.preventDefault();
+  }
+  function dragEnd() {
+    if (!dragging) return;
+    dragging = false;
+    sheet.style.transition = '';
+    // Snap to nearest state based on current position
+    const parent = sheet.parentElement.getBoundingClientRect();
+    const top = sheet.getBoundingClientRect().top - parent.top;
+    const h = parent.height;
+    const pct = top / h;
+    sheet.style.transform = '';
+    if (pct < 0.15) sheetSnap('expanded');
+    else if (pct < 0.55) sheetSnap('mid');
+    else sheetSnap('peek');
+  }
+  sheetHandle.addEventListener('mousedown', dragStart);
+  sheetHandle.addEventListener('touchstart', dragStart, { passive: false });
+  window.addEventListener('mousemove', dragMove);
+  window.addEventListener('touchmove', dragMove, { passive: false });
+  window.addEventListener('mouseup', dragEnd);
+  window.addEventListener('touchend', dragEnd);
+}
+
+// Tapping a list row should also expand the sheet if peek-ed (but it also navigates — navigation wins)
+// Tapping map marker collapses back to peek so you can see the map
+document.addEventListener('click', (e) => {
+  const marker = e.target.closest('.marker-pin');
+  if (marker && sheet) {
+    sheetSnap('peek');
+  }
+}, true);
 
 function handleHash() {
   const h = location.hash.replace(/^#/, '');
