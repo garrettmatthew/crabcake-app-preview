@@ -682,6 +682,111 @@ input, textarea { outline: none; }
   padding-bottom: calc(var(--tab-h) + 24px);
   -webkit-overflow-scrolling: touch;
 }
+
+/* Yellow header bar (onebite style) */
+.sd-header-yellow {
+  background: var(--gold);
+  padding: 10px 12px;
+  display: grid;
+  grid-template-columns: 36px 1fr 36px 36px;
+  gap: 8px;
+  align-items: center;
+  z-index: 30;
+  color: var(--ink);
+  flex-shrink: 0;
+}
+[data-theme="dark"] .sd-header-yellow { background: var(--gold); color: var(--ink); }
+.sd-header-yellow .hdr-btn {
+  width: 36px; height: 36px;
+  border-radius: 50%;
+  background: rgba(26,22,18,.12);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--ink);
+}
+.sd-header-yellow .hdr-btn:active { transform: scale(.92); }
+.sd-header-yellow .hdr-btn svg { width: 16px; height: 16px; }
+.sd-header-yellow .hdr-title {
+  font-family: 'Bricolage Grotesque', sans-serif;
+  font-weight: 800;
+  font-size: 15.5px;
+  letter-spacing: -.02em;
+  text-align: center;
+  margin: 0;
+  color: var(--ink);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* Twin-red-circles score row (onebite style) */
+.score-row-ob {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+  padding: 20px 0 16px;
+  margin-bottom: 4px;
+}
+.sx {
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+}
+.sx-label {
+  font-family: 'Manrope', sans-serif;
+  font-weight: 700;
+  font-size: 14px;
+  color: var(--ink-2);
+  letter-spacing: -.01em;
+}
+.sx-circle {
+  width: 74px; height: 74px;
+  border-radius: 50%;
+  background: var(--crab);
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: 'Bricolage Grotesque', sans-serif;
+  font-weight: 800;
+  font-size: 28px;
+  letter-spacing: -.04em;
+  box-shadow: 0 4px 12px rgba(232,61,53,.3);
+  border: 3px solid #fff;
+  position: relative;
+  transition: transform .2s var(--ease);
+}
+.sx-circle:active { transform: scale(.95); }
+[data-theme="dark"] .sx-circle { border-color: var(--panel); }
+.sx-count {
+  font-family: 'Manrope', sans-serif;
+  font-size: 11px;
+  color: var(--ink-3);
+  font-weight: 500;
+}
+
+/* Yellow primary CTA (onebite) */
+.btn.gold {
+  background: var(--gold);
+  color: var(--ink);
+  border-color: var(--gold);
+}
+.btn.gold:active { transform: scale(.97); }
+
+.cta-stack {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-bottom: 18px;
+}
+.cta-stack .btn {
+  height: 48px;
+  border-radius: 14px;
+  font-size: 14.5px;
+}
 .sd-hero {
   height: 240px;
   position: relative;
@@ -2365,19 +2470,22 @@ input, textarea { outline: none; }
         </div>
       </div>
 
+      <!-- Onebite-style yellow top bar -->
+      <div class="sd-header-yellow">
+        <button class="hdr-btn" data-nav="back">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="15 18 9 12 15 6"/></svg>
+        </button>
+        <h1 class="hdr-title" id="spotHeaderTitle">Faidley's Seafood</h1>
+        <button class="hdr-btn" id="bookmarkBtn">
+          <svg id="bookmarkIcon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M19 21l-7-5-7 5V5a2 2 0 012-2h10a2 2 0 012 2z"/></svg>
+        </button>
+        <button class="hdr-btn" id="shareBtn">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.6" y1="13.5" x2="15.4" y2="17.5"/><line x1="15.4" y1="6.5" x2="8.6" y2="10.5"/></svg>
+        </button>
+      </div>
+
       <div class="sd-scroll">
         <div class="sd-hero" id="sdHero" style="background-image: var(--ph1);">
-          <button class="sd-back" data-nav="back">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="15 18 9 12 15 6"/></svg>
-          </button>
-          <div class="sd-actions">
-            <button class="icon-btn" id="bookmarkBtn">
-              <svg id="bookmarkIcon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M19 21l-7-5-7 5V5a2 2 0 012-2h10a2 2 0 012 2z"/></svg>
-            </button>
-            <button class="icon-btn" id="shareBtn">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.6" y1="13.5" x2="15.4" y2="17.5"/><line x1="15.4" y1="6.5" x2="8.6" y2="10.5"/></svg>
-            </button>
-          </div>
           <div class="sd-photocount">
             <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
             16
@@ -2389,30 +2497,27 @@ input, textarea { outline: none; }
           <h1 class="sd-name" id="spotName">Faidley's Seafood</h1>
           <div class="sd-sub" id="spotSub"></div>
 
-          <div class="sd-scores">
-            <div class="bigscore bv">
-              <div class="ring lg great" id="spotBV">9.2</div>
-              <div class="meta">
-                <div class="t">Baltimore Boys</div>
-                <div class="s">Broiled</div>
-              </div>
+          <div class="score-row-ob">
+            <div class="sx">
+              <div class="sx-label">Baltimore Boys</div>
+              <div class="sx-circle" id="spotBV">9.2</div>
+              <div class="sx-count">Broiled</div>
             </div>
-            <div class="bigscore c">
-              <div class="ring lg elite" id="spotC">8.7</div>
-              <div class="meta">
-                <div class="t">Community</div>
-                <div class="s">312 reviews</div>
-              </div>
+            <div class="sx">
+              <div class="sx-label">Community</div>
+              <div class="sx-circle" id="spotC">8.7</div>
+              <div class="sx-count">312 reviews</div>
             </div>
           </div>
 
-          <div class="sd-cta-row">
+          <div class="cta-stack">
+            <button class="btn gold" data-nav="rate">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>
+              Leave a Review
+            </button>
             <button class="btn primary">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M9 11a3 3 0 106 0 3 3 0 00-6 0z"/><path d="M12 2a8 8 0 018 8c0 5-8 14-8 14S4 15 4 10a8 8 0 018-8z"/></svg>
-              Directions
-            </button>
-            <button class="btn ghost" data-nav="rate">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>
+              Get Directions
             </button>
           </div>
 
@@ -3149,6 +3254,7 @@ function populateSpot(id) {
   if (!s) return;
   const scr = getScreen('spot');
   setText(scr.querySelector('#spotName'), s.name);
+  setText(scr.querySelector('#spotHeaderTitle'), s.name);
   setText(scr.querySelector('#spotKicker'), 'ENTRY · EST. ' + s.est);
 
   // Build the sub line safely
@@ -3165,12 +3271,8 @@ function populateSpot(id) {
   subEl.appendChild(sep2);
   subEl.appendChild(document.createTextNode(' ' + s.loc));
 
-  const bv = scr.querySelector('#spotBV');
-  setText(bv, s.bv);
-  bv.className = 'ring lg ' + scoreClass(s.bv);
-  const c = scr.querySelector('#spotC');
-  setText(c, s.c);
-  c.className = 'ring lg ' + scoreClass(s.c);
+  setText(scr.querySelector('#spotBV'), s.bv);
+  setText(scr.querySelector('#spotC'), s.c);
   scr.querySelector('#sdHero').style.backgroundImage = 'var(' + s.photo + ')';
 }
 
@@ -3517,9 +3619,9 @@ populateSpot = function(id) {
   const c = document.getElementById('spotC');
   if (bv && c) {
     setTimeout(() => {
-      animateScore(bv, s.bv, 600);
-      animateScore(c, s.c, 700);
-    }, 100);
+      animateScore(bv, s.bv, 260);
+      animateScore(c, s.c, 260);
+    }, 60);
   }
   // Sync bookmark state
   const bookmarkIcon = document.getElementById('bookmarkIcon');
